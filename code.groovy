@@ -67,19 +67,24 @@ h2 {margin-top:1ex}
 </style>
 <body>
 
-<h1>Battery Stat: $mode</h1>
+<h1>Battery Stat</h1>
 """
   String name
   String room
+  String label
+  String color
   for (def device in devices)
   {
     if (mode == 'room' && room != device.roomName) html += "<h2>$device.roomName:</h2>"
-    name = device.displayName
-    room = device.roomName
+    
     int battery = (device.currentBattery as Float).round()
-    int r = min(100, 2 * (100 - battery))
-    int g = min(100, 2 * battery)
-    html += "<div style='border:1px solid #000'><div style='background:rgb($r%,$g%,0%);width:$battery%'>$name ($room): $battery%</div></div>\n"
+    int red   = min(100, 2 * (100 - battery))
+    int green = min(100, 2 * battery)
+    name  = device.displayName
+    room  = device.roomName
+    label = (mode == 'room' || room == null ? name : "$name ($room)") + ": $battery%"
+    color = "rgb($red%,$green%,0%)"
+    html += "<div style='border:1px solid #000;background:linear-gradient(to right,$color,$color $battery%,#fff $battery%)'>$label</div>\n"
   }
   html += '</body></html>'
   render contentType:'text/html', data:html, status:200
