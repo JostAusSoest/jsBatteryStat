@@ -52,8 +52,7 @@ def batteryStat()
     default:     devices = batteryDevices.sort { (100 + it.currentBattery) + '>' + it.displayName }
   }
   
-  String html = """
-<!DOCTYPE html>
+  String html = """<!DOCTYPE html>
 <html>
 <head>
 <title>Battery Stat: $mode</title>
@@ -64,9 +63,10 @@ def batteryStat()
 <style>
 h1, h2 {margin:0; padding:0}
 h2 {margin-top:1ex}
+a {text-decoration:none; color:black}
+div {border:1px solid #000}
 </style>
 <body>
-
 <h1>Battery Stat</h1>
 """
   String name
@@ -82,11 +82,12 @@ h2 {margin-top:1ex}
     int green = min(100, 2 * battery)
     name  = device.displayName
     room  = device.roomName
-    label = (mode == 'room' || room == null ? name : "$name ($room)") + ": $battery%"
+    label = (mode == 'room' || room == null ? name : "$name ($room)")
+    label = "<a href='/device/edit/$device.id' target=_blank>$label</a>"
     color = "rgb($red%,$green%,0%)"
-    html += "<div style='border:1px solid #000;background:linear-gradient(to right,$color,$color $battery%,#fff $battery%)'>$label</div>\n"
+    html += "<div style='background:linear-gradient(to right,$color,$color $battery%,#fff $battery%)'>$label: $battery%</div>\n"
   }
-  html += '</body></html>'
+  html += '</body>\n</html>'
   render contentType:'text/html', data:html, status:200
 }
 
